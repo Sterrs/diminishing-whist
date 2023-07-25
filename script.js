@@ -46,10 +46,18 @@ function createCardElement(card) {
   cardElement.appendChild(suitElement);
 
   cardElement.addEventListener("click", () => {
-    logCardValueAndSuit(card.value, card.suit);
+    fadeOutCard(cardElement, card.value, card.suit);
   });
 
   return cardElement;
+}
+
+function fadeOutCard(cardElement, value, suit) {
+  cardElement.style.opacity = 0;
+  setTimeout(() => {
+    cardElement.style.display = "none";
+    logCardValueAndSuit(value, suit);
+  }, 400);
 }
 
 function logCardValueAndSuit(value, suit) {

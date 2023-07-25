@@ -2,6 +2,12 @@ body {
   font-family: Arial, sans-serif;
 }
 
+.card-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
 .card {
   width: 75px;
   height: 105px;
@@ -9,7 +15,7 @@ body {
   border-radius: 5px;
   padding: 5px;
   margin: 5px;
-  display: inline-flex;
+  display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
@@ -17,12 +23,12 @@ body {
   font-size: 16px;
   font-weight: bold;
   color: #333;
-  cursor: pointer; /* Add cursor pointer on hover */
-  transition: transform 0.2s; /* Add transition effect on click */
+  cursor: pointer;
+  transition: transform 0.2s, opacity 0.4s;
 }
 
 .card:hover {
-  transform: scale(1.1); /* Scale up on hover */
+  transform: scale(1.1);
 }
 
 .card div:nth-child(2) {
