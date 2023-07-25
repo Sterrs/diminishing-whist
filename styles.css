@@ -1,0 +1,31 @@
+body {
+  font-family: Arial, sans-serif;
+}
+
+.card {
+  width: 75px;
+  height: 105px;
+  border: 1px solid #333;
+  border-radius: 5px;
+  padding: 5px;
+  margin: 5px;
+  display: inline-flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  font-size: 16px;
+  font-weight: bold;
+  color: #333;
+  cursor: pointer; /* Add cursor pointer on hover */
+  transition: transform 0.2s; /* Add transition effect on click */
+}
+
+.card:hover {
+  transform: scale(1.1); /* Scale up on hover */
+}
+
+.card div:nth-child(2) {
+  font-size: 20px;
+  font-weight: normal;
+}
