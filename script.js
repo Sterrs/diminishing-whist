@@ -56,12 +56,9 @@ function fadeOutCard(cardElement, value, suit) {
   cardElement.style.opacity = 0;
   setTimeout(() => {
     cardElement.style.display = "none";
-    logCardValueAndSuit(value, suit);
+    lcvs = pyscript.interpreter.globals.get("log_card_value_and_suit");
+    lcvs(value, suit);
   }, 400);
-}
-
-function logCardValueAndSuit(value, suit) {
-  console.log("Clicked card:", value, suit);
 }
 
 // Example usage:

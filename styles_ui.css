@@ -1,0 +1,125 @@
+/* Reset some default styles for consistency */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+}
+
+header {
+    background-color: #333;
+    color: #fff;
+    padding: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+
+.menu-icon {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+    width: 30px;
+    height: 30px;
+    padding: 0;
+}
+
+.line {
+    width: 100%;
+    height: 2px;
+    background-color: #e9e9e9;
+}
+
+.header-title {
+    flex: 1; /* Take up available space in the header */
+    text-align: center; /* Center the title text horizontally */
+    margin: 0 20px; /* Add some margin to create separation between title and icon */
+}
+
+.menu-title {
+    color: #dfdede;
+    margin: 0;
+}
+
+
+.menu {
+    display: block; /* Change to block so it's initially visible */
+    position: fixed;
+    top: 0;
+    left: -200px; /* Start the menu outside the viewport */
+    width: 200px;
+    height: 100vh;
+    background-color: #444;
+    color: #fff;
+    padding: 20px;
+    transform: translateX(0); /* Use transform to animate the sliding effect */
+    transition: transform 0.3s ease-in-out;
+}
+
+.menu-open {
+    transform: translateX(200px); /* Slide the menu into the viewport */
+}
+
+.menu ul {
+    list-style: none;
+}
+
+.menu ul li {
+    padding: 5px 10px;
+}
+
+.player-boxes {
+    display: flex;
+    justify-content: center;
+    background-color: #f2f2f2;
+    padding: 20px 0;
+}
+
+.player-box {
+    background-color: #fff;
+    padding: 15px;
+    margin: 0 10px;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* New CSS class for the highlighted player box */
+.current-player-box {
+    border: 2px solid #f9a825; /* Yellow border to indicate the current player */
+}
+
+.main-content {
+    display: flex;
+    margin: 20px;
+}
+
+.left-column {
+    flex: 3;
+    padding-right: 20px;
+}
+
+.right-column {
+    flex: 1;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    border: 1px solid #ccc;
+}
+
+th, td {
+    padding: 10px;
+    text-align: center;
+    border: 1px solid #ccc;
+}
+
+/* Add your own additional styles and colors to make it look stylish */
