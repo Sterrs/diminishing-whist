@@ -1,19 +1,229 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <link rel="stylesheet" href="https://pyscript.net/latest/pyscript.css" />
-  <script defer src="https://pyscript.net/latest/pyscript.js"></script>
-  <title>Diminishing Whist</title>
-  <link rel="stylesheet" type="text/css" href="styles.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://pyscript.net/latest/pyscript.css" />
+    <script defer src="https://pyscript.net/latest/pyscript.js"></script>
+    <title>Diminishing Whist</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="script.js" defer></script>
+    <py-config>
+      [[fetch]]
+      files=["./ui.py", "./card_collection.py"]
+    </py-config>
 </head>
 <body>
-  <h1>Diminishing Whist</h1>
-  <button id="dealButton">Deal</button>
-  <div id="cardContainer"></div>
-  <script src="script.js"></script>
-  <py-script src="script.py"></py-script>
+    <header>
+        <!-- Clickable menu icon (replacing the previous menu-icon div) -->
+        <button class="menu-icon">
+            <!-- Three horizontal lines icon -->
+            <div class="line"></div>
+            <div class="line"></div>
+            <div class="line"></div>
+        </button>
+        <!-- Div to center the title -->
+        <div class="header-title">
+            <!-- Title for the menu bar -->
+            <h1 class="menu-title">Diminishing Whist</h1>
+        </div>
+        <!-- Menu content -->
+        <nav class="menu">
+            <ul>
+                <li>New Game</li>
+                <li><button class="menu-button" onclick="showRules()">Rules</button></li>
+                <li>Cheats</li>
+                <li>Quit</li>
+                <!-- Add more menu options as needed -->
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Player information boxes -->
+    <div id="playerBoxes" class="player-boxes">
+        <!-- Player 1 -->
+        <div class="player-box">
+            <h3>Player A: Random</h3>
+            <p>Tricks: 3/5</p>
+        </div>
+        <!-- Player 2 -->
+        <div class="player-box">
+            <h3>Player B: You</h3>
+            <p>Tricks: 2/2</p>
+        </div>
+        <!-- Player 3 -->
+        <div class="player-box">
+            <h3>Player C: Expectation</h3>
+            <p>Tricks: 1/3</p>
+        </div>
+        <!-- Player 4 -->
+        <div class="player-box">
+            <h3>Player D: Stockfish</h3>
+            <p>Tricks: 1/0</p>
+        </div>
+        <!-- Player 5 -->
+        <div class="player-box">
+            <h3>Player E: Bridge</h3>
+            <p>Tricks: 2/3</p>
+        </div>
+    </div>
+
+<!-- Two-column layout -->
+    <div class="main-content">
+        <div class="left-column" id="mainContentArea">
+          <p>Current trick:</p>
+          <div id="trickContainer" class="card-container"></div>
+          <!-- <button id="dealButton">Deal</button> -->
+          <p>Your hand:</p>
+          <!-- Main content area with filler text -->
+        </div>
+        <!-- ["♠️", "♥️", "♦️", "♣️"]-->
+        <div class="right-column">
+            <!-- Table with scores -->
+            <table id="scoresTable">
+                <thead>
+                    <tr>
+                        <!-- Table headers for players -->
+                        <th>Round</th>
+                        <th>A</th>
+                        <th>B</th>
+                        <th>C</th> 
+                        <th>D</th> 
+                        <th>E</th> 
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Player 1 stats -->
+                    <tr>
+                        <td>10♥️</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                    </tr>
+                    <!-- Player 2 stats -->
+                    <tr>
+                        <td>9♣️</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                    </tr>
+                    <!-- Player 3 stats -->
+                    <tr>
+                        <td>8♥️</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                    </tr>
+                    <!-- Player 4 stats -->
+                    <tr>
+                        <td>7♠️</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                    </tr>
+                    <!-- Player 5 stats -->
+                    <tr>
+                        <td>6<b>NT</b></td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                    </tr>
+                    <tr>
+                        <td>5♥️</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                    </tr>
+                    <tr>
+                        <td>4♣️</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                    </tr>
+                    <tr>
+                        <td>3♦️</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                    </tr>
+                    <tr>
+                        <td>2♠️</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                    </tr>
+                    <tr>
+                        <td>1<b>NT</b></td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="hand">
+        <div id="handContainer" class="card-container"></div>
+    </div>
+    <!-- Pop up rules window -->
+    <div id="rulesModal" class="modal">
+        <div class="modal-content">
+        <span class="close-button">&times;</span>
+        <div class="rules-content">
+            <h2>Rules</h2>
+            <h3>Introduction</h3>
+            <p>
+            Diminshing Whist is a trick-taking card game for four or five players which is played with a standard deck of 52 playing cards.
+            The game is split into ten rounds, each of which either has or does not have a trump suit associated with it, as well as a number of cards
+            dealt in that round. For example, the first round 10♥️ has trump suit hearts and ten cards are dealt to each player. 6<b>NT</b> on the other hand has
+            no trump suit and six cards are dealt.
+            At the beginning of each round, the specified number of cards are dealt to each player. The round is split into two phases, a bidding phase and a
+            trick-taking phase.
+            </p>
+            <h3>Bidding</h3>
+            <p>
+            Each player looks at their hand and makes a bid, i.e. makes a prediction of how many 'tricks' they will win. 10 additional points are awarded to
+            those who obtain exactly as many tricks as they bid at the start of the round, in addition to awarding one point for each trick obtained to every player.
+            However, if you obtain <i>more</i> tricks than you bid, you get zero for that round.
+            </p>
+            <p>
+            Additionally, the last player is not permitted to bid the number of tricks which would make the total sum of all players' bids be exactly the number
+            of tricks available.
+            </p>
+            <p>
+            Players take it in turns to bid first in each round, with this role proceeding clockwise around the table.
+            </p>
+            <h3>Trick-taking</h3>
+            <p>
+            The trick-taking phase of each round consists of a number of tricks. In each trick, every player must play exactly one card. Thus the number
+            of tricks available in each round is exactly as many as the number of cards dealt to each player. Each trick has a leader, who is the person who 
+            won the previous trick, except in the first trick of each round, where it is the person who bid first.
+            </p>
+            <p>TODO: Finish this</p>
+        </div>
+        </div>
+    </div>
+
+    <py-script src="script.py"></py-script>
 </body>
 </html>
-
-
-

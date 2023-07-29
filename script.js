@@ -1,40 +1,35 @@
-document.getElementById("dealButton").addEventListener("click", dealRandomCards);
+// Get the menu icon and menu elements
+const menuIcon = document.querySelector('.menu-icon');
+const menu = document.querySelector('.menu');
 
-function dealRandomCards() {
-  const suits = ["♠️", "♥️", "♦️", "♣️"];
-  const values = ["A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"];
-  const deck = [];
+// Add a click event listener to the menu icon to toggle the menu
+menuIcon.addEventListener('click', () => {
+    menu.classList.toggle('menu-open');
+});
 
-  // Create a standard deck of 52 cards
-  for (const suit of suits) {
-    for (const value of values) {
-      deck.push({ value, suit });
+// Hide the menu when clicking outside of it
+document.addEventListener('click', (event) => {
+    if (!menu.contains(event.target) && !menuIcon.contains(event.target)) {
+        menu.classList.remove('menu-open');
     }
-  }
+});
 
-  const randomHand = [];
+// function displayHand(hand) {
+//   const cardContainer = document.getElementById("cardContainer");
+//   cardContainer.innerHTML = ""; // Clear previous cards
+// 
+//   for (const card of hand) {
+//     const cardElement = createCardElement(card);
+//     cardContainer.appendChild(cardElement);
+//   }
+// }
 
-  // Randomly select 13 cards for the random hand
-  for (let i = 0; i < 13; i++) {
-    const randomIndex = Math.floor(Math.random() * deck.length);
-    randomHand.push(deck.splice(randomIndex, 1)[0]);
-  }
-
-  displayHand(randomHand);
-}
-
-function displayHand(hand) {
-  const cardContainer = document.getElementById("cardContainer");
-  cardContainer.innerHTML = ""; // Clear previous cards
-
-  for (const card of hand) {
-    const cardElement = createCardElement(card);
-    cardContainer.appendChild(cardElement);
-  }
-}
-
-function createCardElement(card) {
+// TODO: Move to Python
+function createCardElement(card, clickHandler=null) {
   const cardElement = document.createElement("div");
+  if (clickHandler) {
+    cardElement.classList.add("clickable-card")
+  }
   cardElement.classList.add("card");
 
   const valueElement = document.createElement("div");
@@ -44,25 +39,43 @@ function createCardElement(card) {
   const suitElement = document.createElement("div");
   suitElement.textContent = card.suit;
   cardElement.appendChild(suitElement);
-
-  cardElement.addEventListener("click", () => {
-    fadeOutCard(cardElement, card.value, card.suit);
-  });
+  if (clickHandler) {
+    cardElement.addEventListener("click", () => {
+      var clear_card = clickHandler(card.value, card.suit);
+      if (clear_card) {
+        fadeOutCard(cardElement, card.value, card.suit);
+      }
+    });
+  }
 
   return cardElement;
 }
 
+// Probably also move to Python
 function fadeOutCard(cardElement, value, suit) {
   cardElement.style.opacity = 0;
   setTimeout(() => {
     cardElement.style.display = "none";
-    lcvs = pyscript.interpreter.globals.get("log_card_value_and_suit");
-    lcvs(value, suit);
   }, 400);
 }
 
-// Example usage:
-// dealRandomCards(); // To display a random hand
-// Or, to display a specific hand, call displayHand with the desired collection of cards:
-// const myHand = [{ value: "A", suit: "♠️" }, { value: "K", suit: "♦️" }, ... ];
-// displayHand(myHand);
+// Javascript to handle pop up rules window
+
+const rulesModal = document.getElementById("rulesModal");
+const closeButton = document.querySelector(".close-button");
+
+closeButton.addEventListener("click", closeRulesModal);
+
+function closeRulesModal() {
+  rulesModal.style.display = "none";
+}
+
+function showRules() {
+  menu.classList.remove('menu-open');
+  rulesModal.style.display = "block";
+}
+
+// Show the rules modal when the page loads
+// document.addEventListener("DOMContentLoaded", () => {
+//   rulesModal.style.display = "block";
+// });
