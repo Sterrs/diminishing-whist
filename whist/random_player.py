@@ -1,8 +1,9 @@
+import asyncio
 import random
-import whist
+import whist.whist as whist
 
 class RandomPlayer(whist.Player):
-    def bid(self, hand, trump_suit, previous_bids, num_players):
+    async def bid(self, hand, trump_suit, previous_bids, num_players):
         num_cards = len(hand)
         mean = num_cards / num_players
         variance = 0.64 * (num_cards ** 2) / (num_players ** 2)
@@ -22,7 +23,7 @@ class RandomPlayer(whist.Player):
                         bid += 1
         return bid
     
-    def play(self, hand, trump_suit, previous_cards, bids, tricks):
+    async def play(self, hand, trump_suit, previous_cards, bids, tricks):
         if previous_cards == []:
             return random.choice(hand)
         leader = previous_cards[0]

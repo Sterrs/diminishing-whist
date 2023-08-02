@@ -73,7 +73,7 @@ class CardCollection:
             if self.fut is not None:
                 # Check if this card satisfies the validation conditions
                 if self.validate is not None and not self.validate(value, suit):
-                        return
+                    return
 
                 self.fut.set_result((value, suit))
  

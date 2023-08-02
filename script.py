@@ -1,32 +1,64 @@
 import asyncio
+import random
+from whist.play import play
+from whist.expectation_player import ExpectationPlayer
+from whist.user_player import UserPlayer
 from ui import UserInterface
-from js import document, createCardElement
-from pyodide.ffi import create_proxy
 
 ui = UserInterface()
 
-# ui.set_scores_row(5, [12,13,14,15,16])
-# ui.set_turn(4)
-# ui.set_player_names(["Jeff", "John", "Simon", "Garfunkel", "Penn"])
-# ui.set_player_tricks(0, 0, "??")
+opponent_names = [
+    "James",
+    "Daniel",
+    "Michael",
+    "David",
+    "Henry",
+    "Jack",
+    "Joseph",
+    "Robert",
+    "Samuel",
+    "Mary",
+    "Sarah",
+    "Richard",
+    "Elizabeth",
+    "Oliver",
+    "Alexander",
+    "Anna",
+    "Martin",
+    "Olivia",
+    "Noah",
+    "Benjamin",
+    "Emma",
+    "Peter",
+    "Anthony",
+    "Edward",
+    "Jason",
+    "Joe",
+    "Thomas",
+    "Sophie",
+    "Will",
+    "Jane",
+    "William",
+    "Anna",
+    "Stephanie",
+    "Ella",
+    "Callum",
+    "John",
+]
 
-async def main():
-    def validate(ans):
-        pass
-    output = await ui.get_bid(5)
-    ui.hand.add_card("K", "D")
-    ui.hand.add_card("A", "H")
-    ui.hand.add_card("A", "D")
-    ui.hand.add_card("A", "C")
-    ui.hand.add_card("A", "S")
-    ui.hand.add_card("A", "C")
-    value, suit = await ui.hand.card_clicked()
-    ui.add_text("Nice choice")
-    trick = ui.new_trick()
-    trick.add_card("7", "D")
-    trick.add_card("8", "H")
-    await asyncio.sleep(1)
-    trick.add_card("8", "H")
+user = random.randint(0,4)
+players = []
+names = []
+for i in range(5):
+    if i == user:
+        players.append(UserPlayer())
+        names.append("You")
+    else:
+        players.append(ExpectationPlayer())
+        name = random.choice(opponent_names)
+        names.append(random.choice(opponent_names))
+        opponent_names.remove(name)
+        
+ui.set_player_names(names)
 
-
-asyncio.ensure_future(main())
+asyncio.ensure_future(play(players, True, ui))

@@ -1,3 +1,4 @@
+import asyncio
 import itertools
 
 values = [str(i) for i in range(2,11)] + ["J","Q","K","A"]
@@ -21,11 +22,12 @@ class Player:
         # Cards seen played in previous rounds, never includes this player's hand or cards from this round
         self.cards_seen = []
         self.player_no = None
+        self.ui = None
 
-    def bid(self, hand, trump_suit, previous_bids, num_players):
+    async def bid(self, hand, trump_suit, previous_bids, num_players):
         return 0
     
-    def play(self, hand, trump_suit, previous_cards, bids, tricks):
+    async def play(self, hand, trump_suit, previous_cards, bids, tricks):
         return hand[0]
     
     # Allow Players to update which cards have been played at the end of each round

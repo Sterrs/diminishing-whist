@@ -10,7 +10,7 @@
     <script src="script.js" defer></script>
     <py-config>
       [[fetch]]
-      files=["./ui.py", "./card_collection.py"]
+      files=["./ui.py", "./card_collection.py", "./whist/play.py", "./whist/expectation_player.py", "./whist/random_player.py", "./whist/user_player.py", "./whist/whist.py"]
     </py-config>
 </head>
 <body>
@@ -32,10 +32,14 @@
             <ul>
                 <li>New Game</li>
                 <li><button class="menu-button" onclick="showRules()">Rules</button></li>
-                <li>Cheats</li>
-                <li>Quit</li>
+                <li><button class="menu-button" onclick="showAbout()">About</button></li>
+                <!-- TODO: Add some cheats -->
+                <!-- <li>Cheats</li> -->
                 <!-- Add more menu options as needed -->
             </ul>
+            <div id="github-div">
+                <a href="https://www.google.com"><img id="github" src="./github-mark.png" alt="GitHub Repo" width=30 height=30></a>
+            </div>
         </nav>
     </header>
 
@@ -43,41 +47,34 @@
     <div id="playerBoxes" class="player-boxes">
         <!-- Player 1 -->
         <div class="player-box">
-            <h3>Player A: Random</h3>
-            <p>Tricks: 3/5</p>
+            <h3>Player A</h3>
+            <p>Tricks: 0/??</p>
         </div>
         <!-- Player 2 -->
         <div class="player-box">
-            <h3>Player B: You</h3>
-            <p>Tricks: 2/2</p>
+            <h3>Player B</h3>
+            <p>Tricks: 0/??</p>
         </div>
         <!-- Player 3 -->
         <div class="player-box">
-            <h3>Player C: Expectation</h3>
-            <p>Tricks: 1/3</p>
+            <h3>Player C</h3>
+            <p>Tricks: 0/??</p>
         </div>
         <!-- Player 4 -->
         <div class="player-box">
-            <h3>Player D: Stockfish</h3>
-            <p>Tricks: 1/0</p>
+            <h3>Player D</h3>
+            <p>Tricks: 0/??</p>
         </div>
         <!-- Player 5 -->
         <div class="player-box">
-            <h3>Player E: Bridge</h3>
-            <p>Tricks: 2/3</p>
+            <h3>Player E</h3>
+            <p>Tricks: 0/??</p>
         </div>
     </div>
 
 <!-- Two-column layout -->
     <div class="main-content">
-        <div class="left-column" id="mainContentArea">
-          <p>Current trick:</p>
-          <div id="trickContainer" class="card-container"></div>
-          <!-- <button id="dealButton">Deal</button> -->
-          <p>Your hand:</p>
-          <!-- Main content area with filler text -->
-        </div>
-        <!-- ["♠️", "♥️", "♦️", "♣️"]-->
+        <div class="left-column" id="mainContentArea"></div>
         <div class="right-column">
             <!-- Table with scores -->
             <table id="scoresTable">
@@ -113,7 +110,7 @@
                     </tr>
                     <!-- Player 3 stats -->
                     <tr>
-                        <td>8♥️</td>
+                        <td>8♦️</td>
                         <td>-</td>
                         <td>-</td>
                         <td>-</td>
@@ -191,35 +188,107 @@
         <span class="close-button">&times;</span>
         <div class="rules-content">
             <h2>Rules</h2>
+            <br>
             <h3>Introduction</h3>
+            <br>
             <p>
             Diminshing Whist is a trick-taking card game for four or five players which is played with a standard deck of 52 playing cards.
             The game is split into ten rounds, each of which either has or does not have a trump suit associated with it, as well as a number of cards
             dealt in that round. For example, the first round 10♥️ has trump suit hearts and ten cards are dealt to each player. 6<b>NT</b> on the other hand has
             no trump suit and six cards are dealt.
+            </p>
+            <br>
+            <p>
             At the beginning of each round, the specified number of cards are dealt to each player. The round is split into two phases, a bidding phase and a
             trick-taking phase.
             </p>
+            <br>
             <h3>Bidding</h3>
+            <br>
             <p>
             Each player looks at their hand and makes a bid, i.e. makes a prediction of how many 'tricks' they will win. 10 additional points are awarded to
             those who obtain exactly as many tricks as they bid at the start of the round, in addition to awarding one point for each trick obtained to every player.
             However, if you obtain <i>more</i> tricks than you bid, you get zero for that round.
             </p>
+            <br>
             <p>
             Additionally, the last player is not permitted to bid the number of tricks which would make the total sum of all players' bids be exactly the number
             of tricks available.
             </p>
+            <br>
             <p>
             Players take it in turns to bid first in each round, with this role proceeding clockwise around the table.
             </p>
+            <br>
             <h3>Trick-taking</h3>
+            <br>
             <p>
             The trick-taking phase of each round consists of a number of tricks. In each trick, every player must play exactly one card. Thus the number
             of tricks available in each round is exactly as many as the number of cards dealt to each player. Each trick has a leader, who is the person who 
             won the previous trick, except in the first trick of each round, where it is the person who bid first.
             </p>
-            <p>TODO: Finish this</p>
+            <br>
+            <p>
+            Whoever leads decides what the suit for that round is, by playing a card of that suit. All other players <i>must</i> play a card of that suit if they have
+            one in their hand. If they do not, they may play a card from any suit of their choosing.
+            </p>
+            <br>
+            <p>
+            The player who plays the highest trump card wins the round. If no trump card is played, the player who plays the highest card of the suit which
+            was played by the leader wins the round. Within suits, cards are ordered with Ace being the highest and Two being the lowest.
+            </p>
+            <br>
+            <h3>Winning</h3>
+            <br>
+            <p>
+            The player with the highest score wins. Getting a high score depends on whether your bids are wise and whether your play suits the
+            cards you have and the bid you made. This eliminates some of the luck from the game.
+            </p>
+        </div>
+        </div>
+    </div>
+    <div id="aboutModal" class="modal">
+        <div class="modal-content">
+        <span class="about-close-button close-button">&times;</span>
+        <div class="rules-content">
+            <h2>About</h2>
+            <p>
+            This is a very rushed website I threw together to allow people to play against my (terrible) Diminishing Whist engines.
+            Hopefully in the future I can make some which are vaguely competent at the game.
+            </p>   
+            <br>
+            <p>
+            For those that are interested, here's a vague overview of the project. The site is written in pure HTML with CSS.
+            Most of the code is written in Python and runs locally via PyScript. PyScript is just CPython but compiled to WASM and
+            running in the browser. This explains the slow-ish loading time of the page. If anything breaks, it's almost certainly
+            because the PyScript stuff that gets fetched when the page loads has changed.
+            </p>   
+            <br>
+            <p>
+            ChatGPT was immensely helpful in designing the interface and generally providing lots of the HTML and CSS code. Most
+            weird quirks are a product of that and me just changing random things until it looks right.
+            </p>   
+            <br>
+            <p>
+            The AIs themselves are extremely simple. For bidding, they try to estimate the expected value of their hand by
+            working out the probability of each of their cards winning a random round from the remaining cards (the cards from that
+            round being chosen at random, one improvement would be to take into account the fact that players must follow suit).
+            They then bid whatever is closest to the sum of those probabilities.
+            </p>   
+            <br>
+            <p>
+            For playing cards, they play whichever card makes their expected number of tricks closest to the number of tricks they
+            bid in the same manner.
+            </p>   
+            <br>
+            <p>
+            You don't need me to explain all the flaws with this approach, just try playing against them. See how high of a score
+            you can get.
+            </p>   
+            <br>
+            <p>
+            In the future I might try to apply some machine learning techniques to make some stronger players.
+            </p>   
         </div>
         </div>
     </div>

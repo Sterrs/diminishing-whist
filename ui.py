@@ -1,5 +1,5 @@
 import asyncio
-from card_collection import CardCollection
+from card_collection import CardCollection, SUITS, SYMBOLS
 from pyscript import Element
 from pyodide.ffi import create_proxy
 from js import document
@@ -17,7 +17,7 @@ class UserInterface:
         self.hand = CardCollection(self.hand_container.element)
         self.main_content_area = Element("mainContentArea")
         self.current_turn = None
-
+    
     def set_scores_row(self, row_number, scores):
         table_body = self.scores_table.element.children[1]
         row = table_body.children[row_number]
@@ -85,25 +85,46 @@ class UserInterface:
             if event.keyCode != 13 or not validate(val):
                 return 
              
-            fut.set_result(val)
+            fut.set_result(int(val))
             self.main_content_area.element.removeChild(input_element)
  
         input_element.addEventListener("keydown", create_proxy(submit))
 
         self.main_content_area.element.append(input_element)
+        self.scroll_to_bottom()
 
         output = await fut
         return output
-
 
     def new_trick(self):
         """Create a new trick and return the corresponding CardCollection"""
         element = document.createElement("div")
         element.classList.add("card-container")
         self.main_content_area.element.append(element)
+        self.scroll_to_bottom()
         return CardCollection(element)
 
     def add_text(self, text):
         element = document.createElement("p")
         element.innerText = text
         self.main_content_area.element.append(element)
+        self.scroll_to_bottom()
+    
+    def add_subheading(self, text):
+        element = document.createElement("h3")
+        element.innerText = text
+        self.main_content_area.element.append(element)
+        self.scroll_to_bottom()
+    
+    def add_round(self, round_number, round_suit):
+        element = document.createElement("h1")
+        if round_suit in SUITS:
+            suit_symbol = SYMBOLS[SUITS.index(round_suit)]
+        else:
+            suit_symbol = f"<b>NT</b>"
+        element.innerText = f"Round: {round_number}{suit_symbol}"
+        self.main_content_area.element.append(element)
+        self.scroll_to_bottom()
+
+    def scroll_to_bottom(self):
+        self.main_content_area.element.scrollTop = self.main_content_area.element.scrollHeight

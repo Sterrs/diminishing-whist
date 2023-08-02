@@ -1,6 +1,7 @@
 import math
+import asyncio
 import logging
-import whist
+import whist.whist as whist
 
 
 # Compare card1 and card2, assuming follow suit is card1.
@@ -84,7 +85,7 @@ class ExpectationPlayer(whist.Player):
                 return True
         return False
 
-    def bid(self, hand, trump_suit, previous_bids, num_players):
+    async def bid(self, hand, trump_suit, previous_bids, num_players):
         num_cards = len(hand)
         cards_left = list(filter(lambda c: c not in hand, whist.new_deck()))
         chances = list((chance_of_win(num_players, c, trump_suit, cards_left) for c in hand))
@@ -105,7 +106,7 @@ class ExpectationPlayer(whist.Player):
                         bid += 1
         return bid
     
-    def play(self, hand, trump_suit, previous_cards, bids, tricks):
+    async def play(self, hand, trump_suit, previous_cards, bids, tricks):
         num_players = len(bids)
         cards_seen = hand + previous_cards + self.cards_seen
         cards_left = list(filter(lambda c: c not in cards_seen, whist.new_deck()))

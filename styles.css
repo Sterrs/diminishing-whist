@@ -2,19 +2,21 @@
   display: flex;
   flex-wrap: wrap;
   justify-content: left;
+  height: 120px;
 }
 
 .hand {
   width: 100vw;
   /* margin: 20px; */
   display: flex;
-  position: fixed;
+  /* position: fixed; */
   bottom: 0;
   border-top: 1px solid #ccc;
 }
 
 #handContainer {
   margin: 20px;
+  min-height: 120px;
 }
 
 .card {
@@ -56,7 +58,7 @@
 }
 
 body {
-    font-family: Arial, sans-serif;
+  font-family: Arial, sans-serif;
 }
 
 header {
@@ -67,7 +69,6 @@ header {
     justify-content: space-between;
     align-items: center;
 }
-
 
 .menu-icon {
     background-color: transparent;
@@ -106,7 +107,6 @@ header {
     margin: 0;
 }
 
-
 .menu {
     display: block; /* Change to block so it's initially visible */
     position: fixed;
@@ -119,6 +119,7 @@ header {
     padding: 20px;
     transform: translateX(0); /* Use transform to animate the sliding effect */
     transition: transform 0.3s ease-in-out;
+    z-index: 9950;
 }
 
 .menu-open {
@@ -160,15 +161,23 @@ header {
     margin: 20px;
 }
 
+#mainContentArea {
+  overflow-y: auto;
+  /* flex: 1; */
+}
+
 .left-column {
     flex: 3;
-    padding-right: 20px;
+    height: calc(100vh - 160px - 275px);
+    overflow: auto;
 }
 
 .right-column {
+    height: calc(100vh - 160px - 275px);
+    overflow: auto;
     flex: 1;
     right: 0;
-    position: fixed;
+    /* position: fixed; */
     margin: 20px;
     width: 400px;
 }
@@ -243,4 +252,15 @@ input:focus {
 
 input.invalid {
   border-color: #ff4d4d; /* A shade of red, change it to your preferred red color */
+}
+
+#github {
+  filter: invert(1);
+}
+
+#github-div {
+  padding-top: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }

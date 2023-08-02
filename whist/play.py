@@ -1,12 +1,13 @@
+import asyncio
 import logging
 import random
-import time
-import whist
-from random_player import RandomPlayer
-from user_player import UserPlayer
-from expectation_player import ExpectationPlayer
+import whist.whist as whist
+from whist.random_player import RandomPlayer
+from whist.user_player import UserPlayer
+from whist.expectation_player import ExpectationPlayer
 
 WAIT = 0.75
+LETTERS = "ABCDE"
 
 def deal(num_players, num_cards):
     deck = whist.new_deck()
@@ -32,35 +33,46 @@ def winner(trump_suit, cards_played):
     return card_vals.index(max(card_vals))
 
 
-def bidding(players, hands, starting_player, trump_suit, sleep=False):
+async def bidding(players, hands, starting_player, trump_suit, sleep=False, ui=None):
     num_players = len(players)
     num_cards = len(hands[0])
     bids = [None] * num_players
     for j in range(starting_player, starting_player + num_players):
+        if ui is not None:
+            ui.set_turn(j % num_players)
         player = players[j % num_players]
-        bid = player.bid(hands[j % num_players], trump_suit, bids, num_players)
+        bid = await player.bid(hands[j % num_players], trump_suit, bids, num_players)
         logging.debug(f"Player {(j % num_players) + 1} bids {bid}.")
+        if ui is not None:
+            ui.add_text(f"Player {LETTERS[j % num_players]} bids {bid}.")
+            ui.set_player_tricks(j % num_players, 0, bid)
         if sleep:
-            time.sleep(0.5*WAIT)
+            await asyncio.sleep(0.5*WAIT)
         bids[j % num_players] = bid
     # Can't all make bids
     if whist.NO_CORRECT_TOTAL:
         assert sum(bids) != num_cards
     logging.info(f"Bids for this round are {bids}")
     if sleep:
-        time.sleep(3*WAIT)
+        await asyncio.sleep(3*WAIT)
     return bids
 
 
-def trick(players, hands, bids, tricks, starting_player, trump_suit, sleep=False):
+async def trick(players, hands, bids, tricks, starting_player, trump_suit, sleep=False, ui=None):
+    if ui is not None:
+        trick_container = ui.new_trick()
     num_players = len(players)
     num_cards = len(hands[0])
     cards_played = []
     for j in range(starting_player, starting_player + num_players):
+        if ui is not None:
+            ui.set_turn(j % num_players)
         player = players[j % num_players]
         hand = hands[j % num_players]
-        card = player.play(hand, trump_suit, cards_played, bids, tricks)
+        card = await player.play(hand, trump_suit, cards_played, bids, tricks)
 
+        if ui is not None:
+            trick_container.add_card(card.value, card.suit)
         card_str = str(card)
         if len(card_str) == 2:
             card_str = " " + card_str
@@ -68,7 +80,7 @@ def trick(players, hands, bids, tricks, starting_player, trump_suit, sleep=False
             card_str += "*"
         logging.debug(f"Player {(j % num_players) + 1} played {card_str}")
         if sleep:
-            time.sleep(0.5*WAIT)
+            await asyncio.sleep(0.5*WAIT)
 
         assert card in hand
         if cards_played != []:
@@ -83,9 +95,11 @@ def trick(players, hands, bids, tricks, starting_player, trump_suit, sleep=False
 
 
 # Players are pairs (bidding, play) where
-def play(players, sleep=False):
+# If ui is not None, assume we are just running in the terminal
+async def play(players, sleep=False, ui=None):
     for i, player in enumerate(players):
         player.player_no = i
+        player.ui = ui
 
     num_players = len(players)
     suit_rounds = whist.suits + ["NT"]
@@ -94,48 +108,62 @@ def play(players, sleep=False):
     # For each of the ten rounds:
     for i, num_cards in enumerate(range(10, 0, -1)):
         # Forget which cards we've seen
-        for player in players:
+        for j, player in enumerate(players):
             player.clear()
+            ui.set_player_tricks(j, 0, "??")
         # Deal
         logging.info(f"Round {num_cards}:")
         hands = deal(num_players, num_cards)
         # Calculate which player starts and trump suit
         starting_player = i % num_players
         trump_suit = suit_rounds[i % 5]
+        if ui is not None:
+            ui.add_round(num_cards, trump_suit)
         logging.info(f"Trump suit is {whist.get_symbol(trump_suit) if trump_suit != 'NT' else 'No Trump'}")
         # Bid
         logging.debug(f"Cards dealt. Commence bidding:")
         
-        bids = bidding(players, hands, starting_player, trump_suit, sleep)
+        bids = await bidding(players, hands, starting_player, trump_suit, sleep, ui)
  
         # Play
         tricks = [0] * num_players
         for trick_num in range(1,num_cards+1):
+            if ui is not None:
+                ui.add_subheading(f"Trick {trick_num}")
             logging.debug(f"Trick {trick_num} out of {num_cards}.")
             logging.debug(f"Tricks won for this round so far are: {tricks}")
 
-            trick_winner = trick(players, hands, bids, tricks, starting_player, trump_suit, sleep)
+            trick_winner = await trick(players, hands, bids, tricks, starting_player, trump_suit, sleep, ui)
 
             logging.debug(f"Player {trick_winner + 1} won the trick.")
+            if ui is not None:
+                ui.add_text(f"Player {LETTERS[trick_winner]} wins the trick.")
+                ui.set_player_tricks(trick_winner, tricks[trick_winner] + 1, bids[trick_winner])
             if sleep:
-                time.sleep(3*WAIT)
+                await asyncio.sleep(3*WAIT)
             tricks[trick_winner] += 1
             starting_player = trick_winner
         logging.info(f"Tricks won: {tricks}")
         
-        for i, (bid, tricks_won) in enumerate(zip(bids, tricks)):
+        scores_this_round = []
+        for j, (bid, tricks_won) in enumerate(zip(bids, tricks)):
             score = 0
             if bid == tricks_won:
                 score += 10
             if tricks_won <= bid:
                 score += tricks_won
-            logging.debug(f"Player {i+1} scored {score} in this round")
-            scores[i] += score
+            logging.debug(f"Player {j+1} scored {score} in this round")
+            scores[j] += score
+            scores_this_round.append(tricks_won)
+        if ui is not None:
+            ui.set_scores_row(i, scores)
         logging.info(f"The current scores are {scores}")
         if sleep:
-            time.sleep(5*WAIT)
+            await asyncio.sleep(5*WAIT)
+        if ui is not None:
+            ui.clear_main_content()
     return scores
-            
+    
 
 if __name__ == "__main__":
     num_players = 5
