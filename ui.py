@@ -121,7 +121,7 @@ class UserInterface:
         if round_suit in SUITS:
             suit_symbol = SYMBOLS[SUITS.index(round_suit)]
         else:
-            suit_symbol = f"<b>NT</b>"
+            suit_symbol = f"NT"
         element.innerText = f"Round: {round_number}{suit_symbol}"
         self.main_content_area.element.append(element)
         self.scroll_to_bottom()
