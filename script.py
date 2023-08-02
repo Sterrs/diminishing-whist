@@ -46,7 +46,7 @@ opponent_names = [
     "John",
 ]
 
-user = 4#random.randint(0,4)
+user = random.randint(0,4)
 players = []
 names = []
 for i in range(5):
