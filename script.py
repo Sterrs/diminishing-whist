@@ -46,7 +46,7 @@ opponent_names = [
     "John",
 ]
 
-user = random.randint(0,4)
+user = 4#random.randint(0,4)
 players = []
 names = []
 for i in range(5):
@@ -61,4 +61,12 @@ for i in range(5):
         
 ui.set_player_names(names)
 
-asyncio.ensure_future(play(players, True, ui))
+async def main():
+    scores = await play(players, True, ui)
+    place = sorted(scores, reverse=True).index(scores[user])
+    suffixes = ["won!", "came second.", "came third.", "came fourth.", "came last."]
+    text = f"You {suffixes[place]} Your score was {scores[user]}."
+    ui.add_subheading(text)
+
+
+asyncio.ensure_future(main())

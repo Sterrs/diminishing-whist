@@ -28,11 +28,11 @@ class UserPlayer(whist.Player):
         self.ui.hand.clear()
         for card in hand:
             self.ui.hand.add_card(card.value, card.suit)
-            await asyncio.sleep(0.2)
+            await asyncio.sleep(0.1)
 
-        disallow = None
-        if len(previous_bids) == num_players - 1:
-            disallow = len(hand) - sum(previous_bids)
+        disallow = None 
+        if sum((1 for bid in previous_bids if bid is not None)) == num_players - 1:
+            disallow = len(hand) - sum((bid for bid in previous_bids if bid is not None))
 
         bid = await self.ui.get_bid(len(hand), disallow)
         return bid
@@ -53,7 +53,15 @@ class UserPlayer(whist.Player):
             card_input = input("Type which card you'd like to play: ")
             card = whist.Card.from_str(card_input)
         else:
-            value, suit = await self.ui.hand.card_clicked()
+            # Which suit we must play. None if any suit is fine
+            suits_allowed = None
+            if previous_cards != []:
+                lead_suit = previous_cards[0].suit
+
+                filtered = list(filter(lambda c: c.suit == lead_suit, hand))
+                if filtered:
+                    suits_allowed = lead_suit
+            value, suit = await self.ui.hand.card_clicked(lambda value, suit: suits_allowed is None or suit == suits_allowed)
             card = whist.Card(value, suit)
         return card
 
