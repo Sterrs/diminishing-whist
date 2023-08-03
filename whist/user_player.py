@@ -26,7 +26,10 @@ class UserPlayer(whist.Player):
             return int(bid)
         
         self.ui.hand.clear()
-        for card in hand:
+
+        sorted_hand = sorted(hand, key=lambda c: (13 - whist.values.index(c.value)) + 13 * ((whist.suits.index(c.suit) - whist.suits.index(trump_suit)) % 4), reverse=False)
+
+        for card in sorted_hand:
             self.ui.hand.add_card(card.value, card.suit)
             await asyncio.sleep(0.1)
 

@@ -66,6 +66,8 @@ class CardCollection:
         element.appendChild(value_element)
 
         suit_element = document.createElement("div")
+        if suit == "H" or suit == "D":
+            suit_element.style.color = "red"
         suit_element.textContent = SYMBOLS[SUITS.index(suit)]
         element.appendChild(suit_element)
 

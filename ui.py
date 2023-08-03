@@ -122,7 +122,12 @@ class UserInterface:
             suit_symbol = SYMBOLS[SUITS.index(round_suit)]
         else:
             suit_symbol = f"NT"
-        element.innerText = f"Round: {round_number}{suit_symbol}"
+        symbol_span = document.createElement("span")
+        if round_suit == "H" or round_suit == "D":
+            symbol_span.style.color = "red"
+        symbol_span.innerHTML = suit_symbol
+        element.innerText = f"Round: {round_number}"
+        element.appendChild(symbol_span)
         self.main_content_area.element.append(element)
         self.scroll_to_bottom()
 
