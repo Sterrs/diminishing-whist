@@ -27,7 +27,9 @@ class UserPlayer(whist.Player):
         
         self.ui.hand.clear()
 
-        sorted_hand = sorted(hand, key=lambda c: (13 - whist.values.index(c.value)) + 13 * ((whist.suits.index(c.suit) - whist.suits.index(trump_suit)) % 4), reverse=False)
+        trump_aux = "H" if trump_suit == "NT" else trump_suit
+
+        sorted_hand = sorted(hand, key=lambda c: (13 - whist.values.index(c.value)) + 13 * ((whist.suits.index(c.suit) - whist.suits.index(trump_aux)) % 4), reverse=False)
 
         for card in sorted_hand:
             self.ui.hand.add_card(card.value, card.suit)
